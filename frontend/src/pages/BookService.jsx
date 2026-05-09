@@ -73,80 +73,110 @@ export default function BookService() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-12 max-w-md w-full text-center border border-gray-100">
-          <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Booking Confirmed!</h2>
-          <p className="text-gray-500">Redirecting to your bookings...</p>
+      <div className="min-h-[calc(100vh-80px)] bg-app-bg flex items-center justify-center px-4 fade-in">
+        <div className="bg-white rounded-premium shadow-premium p-12 max-w-md w-full text-center border border-gray-100">
+          <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">✅</div>
+          <h2 className="text-3xl font-extrabold text-app-text mb-2">Booking Success!</h2>
+          <p className="text-gray-500 font-medium">Redirecting you to your bookings dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center px-4 py-8">
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border border-gray-100">
-        <h2 className="text-2xl font-extrabold mb-2 text-center text-gray-900">Book a Service</h2>
-        <p className="text-gray-500 text-center text-sm mb-6">Fill in the details below</p>
+    <div className="min-h-[calc(100vh-80px)] bg-app-bg flex items-center justify-center px-4 py-12 fade-in">
+      <div className="bg-white rounded-premium shadow-[0_20px_60px_rgba(108,59,245,0.08)] max-w-xl w-full border border-gray-100 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-br from-primary to-[#9B6BFF] p-8 text-center text-white relative">
+          <div className="relative z-10">
+            <h2 className="text-3xl font-extrabold mb-1 tracking-tight">Complete Your Booking</h2>
+            <p className="text-white/80 text-sm">Professional service at your doorstep</p>
+          </div>
+        </div>
 
-        {error && <div className="bg-red-50 text-red-700 p-3 rounded-xl mb-4 border border-red-200 text-sm">{error}</div>}
+        <div className="p-8">
+          {error && <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-100 text-sm font-medium flex items-center gap-2">
+            <span>⚠️</span> {error}
+          </div>}
 
-        <form onSubmit={handleSubmit}>
-          <label className="block mb-2 font-semibold text-gray-700 text-sm">Select Service</label>
-          <select
-            value={serviceId}
-            onChange={(e) => setServiceId(e.target.value)}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl mb-4 focus:outline-none focus:border-blue-500 transition-colors bg-white"
-          >
-            <option value="">Choose a service</option>
-            {services.map((service) => (
-              <option key={service._id} value={service._id}>
-                {service.icon} {service.name} - ₹{service.basePrice}
-              </option>
-            ))}
-          </select>
+          <form onSubmit={handleSubmit}>
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div className="md:col-span-2">
+                <label className="block mb-2 font-bold text-app-text text-sm ml-1">Service Type</label>
+                <select
+                  value={serviceId}
+                  onChange={(e) => setServiceId(e.target.value)}
+                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all appearance-none cursor-pointer"
+                >
+                  <option value="">Select a service</option>
+                  {services.map((service) => (
+                    <option key={service._id} value={service._id}>
+                      {service.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          {selectedService && (
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-center">
-              <span className="text-blue-700 font-bold text-lg">₹{selectedService.basePrice}</span>
-              <span className="text-blue-600 text-sm ml-2">{selectedService.name}</span>
+              <div>
+                <label className="block mb-2 font-bold text-app-text text-sm ml-1">Preferred Date</label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  min={getMinDate()}
+                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-bold text-app-text text-sm ml-1">Preferred Time</label>
+                <input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all cursor-pointer"
+                />
+              </div>
             </div>
-          )}
 
-          <label className="block mb-2 font-semibold text-gray-700 text-sm">Select Date</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            min={getMinDate()}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl mb-4 focus:outline-none focus:border-blue-500 transition-colors"
-          />
+            {selectedService && (
+              <div className="bg-primary/5 border border-primary/10 rounded-2xl p-5 mb-8 flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm border border-gray-100">
+                    {selectedService.icon}
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs font-bold uppercase tracking-wider">Selected Plan</p>
+                    <p className="text-app-text font-bold text-lg">{selectedService.name}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-primary font-black text-2xl">₹{selectedService.basePrice}</p>
+                  <p className="text-gray-400 text-xs font-medium">Inc. all taxes</p>
+                </div>
+              </div>
+            )}
 
-          <label className="block mb-2 font-semibold text-gray-700 text-sm">Select Time</label>
-          <input
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl mb-4 focus:outline-none focus:border-blue-500 transition-colors"
-          />
+            <label className="block mb-2 font-bold text-app-text text-sm ml-1">Service Address</label>
+            <textarea
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="House No, Street, Landmark, City..."
+              className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl mb-8 focus:outline-none focus:border-primary focus:bg-white transition-all resize-none h-32"
+            />
 
-          <label className="block mb-2 font-semibold text-gray-700 text-sm">Service Address</label>
-          <textarea
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="Enter your complete address"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl mb-6 focus:outline-none focus:border-blue-500 transition-colors resize-none"
-            rows="3"
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50 transition-all duration-200 shadow-sm"
-          >
-            {loading ? 'Booking...' : 'Confirm Booking'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-secondary text-white py-4 rounded-btn font-bold hover:bg-secondary-hover shadow-[0_8px_20px_rgba(255,107,53,0.25)] hover:shadow-[0_8px_25px_rgba(255,107,53,0.35)] disabled:opacity-50 transition-all duration-300 text-lg hover:-translate-y-1"
+            >
+              {loading ? 'Processing...' : 'Confirm & Book Now'}
+            </button>
+            <p className="text-center text-gray-400 text-xs font-medium mt-4">
+              By confirming, you agree to our terms and conditions.
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -23,23 +23,23 @@ const renderLogin = () => {
 describe('Login', () => {
   it('renders login heading', () => {
     renderLogin();
-    expect(screen.getByText('Customer Login')).toBeInTheDocument();
+    expect(screen.getByText('Welcome Back')).toBeInTheDocument();
   });
 
   it('renders mobile and password fields', () => {
     renderLogin();
     expect(screen.getByPlaceholderText('10-digit mobile')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter password')).toBeInTheDocument();
   });
 
   it('renders login button', () => {
     renderLogin();
-    expect(screen.getByText('Login')).toBeInTheDocument();
+    expect(screen.getByText('Secure Login')).toBeInTheDocument();
   });
 
   it('shows error with empty fields', async () => {
     renderLogin();
-    fireEvent.click(screen.getByText('Login'));
+    fireEvent.click(screen.getByText('Secure Login'));
     expect(screen.getByText('Mobile and password required')).toBeInTheDocument();
   });
 
@@ -50,6 +50,6 @@ describe('Login', () => {
 
   it('renders vendor login link', () => {
     renderLogin();
-    expect(screen.getByText('Login here')).toBeInTheDocument();
+    expect(screen.getByText('Switch to Vendor Login')).toBeInTheDocument();
   });
 });

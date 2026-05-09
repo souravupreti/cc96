@@ -18,10 +18,10 @@ describe('StatusBadge', () => {
     expect(screen.getByText(/Delivered/)).toBeInTheDocument();
   });
 
-  it('applies yellow styling for Pending', () => {
+  it('applies orange styling for Pending', () => {
     const { container } = render(<StatusBadge status="Pending" />);
     const badge = container.querySelector('span');
-    expect(badge.className).toContain('yellow');
+    expect(badge.className).toContain('orange');
   });
 
   it('applies blue styling for Accepted', () => {

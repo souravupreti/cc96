@@ -31,28 +31,29 @@ const renderLanding = (authValue) => {
 describe('Landing', () => {
   it('renders hero heading', () => {
     renderLanding({ isAuthenticated: false, login: vi.fn(), logout: vi.fn() });
-    expect(screen.getByText(/Book Home Services/)).toBeInTheDocument();
+    expect(screen.getByText(/Your Home,/)).toBeInTheDocument();
+    expect(screen.getByText(/Perfectly Maintained/)).toBeInTheDocument();
   });
 
-  it('renders Get Started button when not logged in', () => {
+  it('renders Book a Service button when not logged in', () => {
     renderLanding({ isAuthenticated: false, login: vi.fn(), logout: vi.fn() });
-    expect(screen.getByText(/Get Started Free/)).toBeInTheDocument();
+    expect(screen.getByText(/Book a Service/)).toBeInTheDocument();
   });
 
-  it('renders Browse Services button when customer logged in', () => {
+  it('renders Browse All Services button when customer logged in', () => {
     renderLanding({
       isAuthenticated: true,
       userType: 'customer',
       login: vi.fn(),
       logout: vi.fn()
     });
-    const buttons = screen.getAllByText('Browse Services →');
+    const buttons = screen.getAllByText('Browse All Services');
     expect(buttons.length).toBeGreaterThan(0);
   });
 
-  it('renders How It Works section', () => {
+  it('renders How it works section', () => {
     renderLanding({ isAuthenticated: false, login: vi.fn(), logout: vi.fn() });
-    expect(screen.getByText('How It Works')).toBeInTheDocument();
+    expect(screen.getByText('How it works')).toBeInTheDocument();
   });
 
   it('renders Popular Services section', () => {

@@ -2,23 +2,23 @@ import React from 'react';
 
 export default function StatusBadge({ status }) {
   const styles = {
-    'Pending': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    'Accepted': 'bg-blue-100 text-blue-800 border-blue-200',
-    'Delivered': 'bg-green-100 text-green-800 border-green-200'
+    'Pending': 'bg-orange-50 text-orange-600 border-orange-100',
+    'Accepted': 'bg-blue-50 text-blue-600 border-blue-100',
+    'Delivered': 'bg-green-50 text-green-600 border-green-100'
   };
 
   const icons = {
     'Pending': '⏳',
-    'Accepted': '✓',
-    'Delivered': '✓✓'
+    'Accepted': '👍',
+    'Delivered': '✓'
   };
 
-  const color = styles[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+  const color = styles[status] || 'bg-gray-50 text-gray-600 border-gray-100';
   const icon = icons[status] || '';
 
   return (
-    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${color}`}>
-      {icon} {status}
+    <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold border ${color} shadow-sm`}>
+      <span>{icon}</span> {status}
     </span>
   );
 }

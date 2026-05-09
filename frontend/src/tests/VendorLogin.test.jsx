@@ -23,13 +23,13 @@ const renderVendorLogin = () => {
 describe('VendorLogin', () => {
   it('renders vendor login heading', () => {
     renderVendorLogin();
-    expect(screen.getByText('Vendor Login')).toBeInTheDocument();
+    expect(screen.getByText('Vendor Portal')).toBeInTheDocument();
   });
 
   it('renders email and password fields', () => {
     renderVendorLogin();
     expect(screen.getByPlaceholderText('vendor@example.com')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter password')).toBeInTheDocument();
   });
 
   it('shows test credentials', () => {
@@ -39,12 +39,12 @@ describe('VendorLogin', () => {
 
   it('shows error with empty fields', () => {
     renderVendorLogin();
-    fireEvent.click(screen.getByText('Login'));
+    fireEvent.click(screen.getByText('Login to Dashboard'));
     expect(screen.getByText('Email and password required')).toBeInTheDocument();
   });
 
   it('renders customer login link', () => {
     renderVendorLogin();
-    expect(screen.getByText('Login here')).toBeInTheDocument();
+    expect(screen.getByText(/Back to Customer Login/i)).toBeInTheDocument();
   });
 });

@@ -36,13 +36,13 @@ describe('BookingCard', () => {
 
   it('shows Accept button for vendor when Pending', () => {
     render(<BookingCard booking={mockBooking} isVendor={true} onAccept={vi.fn()} onDeliver={vi.fn()} />);
-    expect(screen.getByText(/Accept/)).toBeInTheDocument();
+    expect(screen.getByText(/Accept Request/)).toBeInTheDocument();
   });
 
   it('shows Deliver button for vendor when Accepted', () => {
     const accepted = { ...mockBooking, status: 'Accepted' };
     render(<BookingCard booking={accepted} isVendor={true} onAccept={vi.fn()} onDeliver={vi.fn()} />);
-    expect(screen.getByText(/Mark Delivered/)).toBeInTheDocument();
+    expect(screen.getByText(/Mark as Delivered/)).toBeInTheDocument();
   });
 
   it('hides action buttons for customers', () => {

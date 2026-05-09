@@ -28,15 +28,15 @@ describe('Signup', () => {
 
   it('renders step 1 - mobile input', () => {
     renderSignup();
-    expect(screen.getByPlaceholderText(/10-digit mobile/)).toBeInTheDocument();
-    expect(screen.getByText('Send OTP')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/10-digit number/)).toBeInTheDocument();
+    expect(screen.getByText('Get OTP')).toBeInTheDocument();
   });
 
   it('validates mobile number format', async () => {
     renderSignup();
-    const input = screen.getByPlaceholderText(/10-digit mobile/);
+    const input = screen.getByPlaceholderText(/10-digit number/);
     fireEvent.change(input, { target: { value: '123' } });
-    fireEvent.click(screen.getByText('Send OTP'));
+    fireEvent.click(screen.getByText('Get OTP'));
     expect(screen.getByText('Mobile must be 10 digits')).toBeInTheDocument();
   });
 

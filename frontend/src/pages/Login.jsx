@@ -33,52 +33,58 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center px-4 py-8">
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border border-gray-100">
-        <div className="text-center mb-6">
-          <div className="text-4xl mb-3">👤</div>
-          <h2 className="text-2xl font-extrabold text-gray-900">Customer Login</h2>
-          <p className="text-gray-500 text-sm mt-1">Welcome back!</p>
+    <div className="min-h-[calc(100vh-80px)] bg-app-bg flex items-center justify-center px-4 py-12 fade-in">
+      <div className="bg-white rounded-premium shadow-[0_20px_60px_rgba(108,59,245,0.08)] max-w-md w-full border border-gray-100 overflow-hidden">
+        {/* Gradient Header */}
+        <div className="bg-gradient-to-br from-primary to-[#9B6BFF] p-10 text-center text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+          <div className="text-5xl mb-4 relative z-10">👋</div>
+          <h2 className="text-3xl font-extrabold mb-1 tracking-tight relative z-10">Welcome Back</h2>
+          <p className="text-white/80 text-sm relative z-10">Customer Login</p>
         </div>
 
-        {error && <div className="bg-red-50 text-red-700 p-3 rounded-xl mb-4 border border-red-200 text-sm">{error}</div>}
+        <div className="p-8">
+          {error && <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-100 text-sm font-medium flex items-center gap-2 fade-in">
+            <span>⚠️</span> {error}
+          </div>}
 
-        <form onSubmit={handleSubmit}>
-          <label className="block mb-2 font-semibold text-gray-700 text-sm">Mobile Number</label>
-          <input
-            type="text"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            placeholder="10-digit mobile"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl mb-4 focus:outline-none focus:border-blue-500 transition-colors"
-            maxLength="10"
-          />
+          <form onSubmit={handleSubmit}>
+            <label className="block mb-2 font-bold text-app-text text-sm ml-1">Mobile Number</label>
+            <input
+              type="text"
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
+              placeholder="10-digit mobile"
+              className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl mb-5 focus:outline-none focus:border-primary focus:bg-white transition-all text-lg"
+              maxLength="10"
+            />
 
-          <label className="block mb-2 font-semibold text-gray-700 text-sm">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Your password"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl mb-6 focus:outline-none focus:border-blue-500 transition-colors"
-          />
+            <label className="block mb-2 font-bold text-app-text text-sm ml-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl mb-8 focus:outline-none focus:border-primary focus:bg-white transition-all"
+            />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50 transition-all duration-200 shadow-sm"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-secondary text-white py-4 rounded-btn font-bold hover:bg-secondary-hover shadow-[0_8px_20px_rgba(255,107,53,0.25)] hover:shadow-[0_8px_25px_rgba(255,107,53,0.35)] disabled:opacity-50 transition-all duration-300 text-lg hover:-translate-y-0.5"
+            >
+              {loading ? 'Logging in...' : 'Secure Login'}
+            </button>
+          </form>
 
-        <div className="mt-6 pt-6 border-t border-gray-100 text-center space-y-2">
-          <p className="text-gray-500 text-sm">
-            Don't have account? <Link to="/signup" className="text-blue-600 font-semibold hover:underline">Sign Up</Link>
-          </p>
-          <p className="text-gray-500 text-sm">
-            Vendor? <Link to="/vendor-login" className="text-blue-600 font-semibold hover:underline">Login here</Link>
-          </p>
+          <div className="mt-8 pt-8 border-t border-gray-100 text-center space-y-4">
+            <p className="text-gray-500 font-medium">
+              Don't have an account? <Link to="/signup" className="text-primary font-bold hover:text-primary-hover">Sign Up</Link>
+            </p>
+            <Link to="/vendor-login" className="inline-block px-6 py-2 rounded-full border-2 border-gray-100 text-gray-500 hover:border-gray-200 hover:bg-gray-50 font-semibold text-sm transition-all">
+              Switch to Vendor Login
+            </Link>
+          </div>
         </div>
       </div>
     </div>

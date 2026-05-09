@@ -1,41 +1,41 @@
 import React, { useState, useRef } from 'react';
 
-export default function OTPInput({ onChange }) {
-  const [otp, setOtp] = useState(Array(6).fill(''));
+export default function OTPInput({ length = 6, onChange }) {
+  const [otp, setOtp] = useState(new Array(length).fill(''));
   const inputRefs = useRef([]);
 
-  const handleChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
+  const handleChange = (e, index) => {
+    const value = e.target.value;
+    if (isNaN(value)) return;
 
     const newOtp = [...otp];
-    newOtp[index] = value;
+    newOtp[index] = value.substring(value.length - 1);
     setOtp(newOtp);
-
     onChange(newOtp.join(''));
 
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
+    if (value && index < length - 1) {
+      inputRefs.current[index + 1].focus();
     }
   };
 
-  const handleBackspace = (index, e) => {
+  const handleKeyDown = (e, index) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+      inputRefs.current[index - 1].focus();
     }
   };
 
   return (
-    <div className="flex gap-2 justify-center">
-      {otp.map((digit, index) => (
+    <div className="flex gap-3 justify-center mb-6">
+      {otp.map((data, index) => (
         <input
           key={index}
-          ref={(el) => (inputRefs.current[index] = el)}
           type="text"
-          maxLength="1"
-          value={digit}
-          onChange={(e) => handleChange(index, e.target.value)}
-          onKeyDown={(e) => handleBackspace(index, e)}
-          className="w-12 h-12 text-center text-2xl border-2 border-blue-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ref={(ref) => inputRefs.current[index] = ref}
+          value={data}
+          onChange={(e) => handleChange(e, index)}
+          onKeyDown={(e) => handleKeyDown(e, index)}
+          className="w-12 h-14 text-center text-xl font-extrabold bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-primary focus:bg-white focus:outline-none transition-colors shadow-sm"
+          maxLength={1}
           placeholder="-"
         />
       ))}

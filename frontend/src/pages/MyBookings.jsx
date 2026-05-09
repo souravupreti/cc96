@@ -8,6 +8,7 @@ export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('All');
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -30,68 +31,86 @@ export default function MyBookings() {
     }
 
     fetchBookings();
-
-    // Polling every 30 seconds
     const interval = setInterval(fetchBookings, 30000);
     return () => clearInterval(interval);
   }, [auth.isAuthenticated, navigate, fetchBookings]);
 
-  const pendingCount = bookings.filter(b => b.status === 'Pending').length;
-  const acceptedCount = bookings.filter(b => b.status === 'Accepted').length;
-  const deliveredCount = bookings.filter(b => b.status === 'Delivered').length;
+  const filteredBookings = activeTab === 'All' 
+    ? bookings 
+    : bookings.filter(b => b.status === activeTab);
+
+  const tabs = ['All', 'Pending', 'Accepted', 'Delivered'];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-[calc(100vh-80px)] bg-app-bg py-12 px-4 fade-in">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-gray-900">My Bookings</h1>
-            <p className="text-gray-500 text-sm mt-1">Auto-refreshes every 30 seconds</p>
+            <h1 className="text-3xl font-extrabold text-app-text flex items-center gap-3">
+              <span className="bg-primary/10 text-primary w-12 h-12 rounded-2xl flex items-center justify-center">📋</span>
+              My Bookings
+            </h1>
+            <p className="text-gray-500 text-sm mt-2 ml-15">Auto-refreshes every 30 seconds</p>
           </div>
           <button
             onClick={() => { setLoading(true); fetchBookings(); }}
-            className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="bg-white border border-gray-200 text-gray-700 px-5 py-2.5 rounded-full font-bold hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2"
           >
-            ↻ Refresh
+            <span>↻</span> Refresh
           </button>
         </div>
 
-        {/* Status Summary */}
+        {error && <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-100 font-medium">⚠️ {error}</div>}
+
+        {/* Filter Tabs */}
         {bookings.length > 0 && (
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-yellow-700">{pendingCount}</div>
-              <div className="text-yellow-600 text-sm font-medium">Pending</div>
-            </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-blue-700">{acceptedCount}</div>
-              <div className="text-blue-600 text-sm font-medium">Accepted</div>
-            </div>
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-green-700">{deliveredCount}</div>
-              <div className="text-green-600 text-sm font-medium">Delivered</div>
-            </div>
+          <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-2.5 rounded-full font-bold whitespace-nowrap transition-all duration-300 ${
+                  activeTab === tab
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
+                }`}
+              >
+                {tab}
+                <span className={`ml-2 text-xs py-0.5 px-2 rounded-full ${activeTab === tab ? 'bg-white/20' : 'bg-gray-100'}`}>
+                  {tab === 'All' ? bookings.length : bookings.filter(b => b.status === tab).length}
+                </span>
+              </button>
+            ))}
           </div>
         )}
 
-        {error && <div className="bg-red-50 text-red-700 p-4 rounded-xl mb-4 border border-red-200">{error}</div>}
-
         {loading ? (
-          <div className="text-center py-12 text-gray-500">Loading bookings...</div>
-        ) : bookings.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-5xl mb-4">📋</div>
-            <p className="text-gray-500 text-lg">No bookings yet</p>
-            <button
-              onClick={() => navigate('/services')}
-              className="mt-4 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-all"
-            >
-              Book a Service
-            </button>
+          <div className="flex justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : filteredBookings.length === 0 ? (
+          <div className="bg-white rounded-premium border border-gray-100 p-12 text-center shadow-sm fade-in">
+            <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
+              📭
+            </div>
+            <h3 className="text-2xl font-bold text-app-text mb-2">No bookings found</h3>
+            <p className="text-gray-500 mb-8 max-w-md mx-auto">
+              {activeTab === 'All' 
+                ? "You haven't booked any services yet. Find a professional for your home today!"
+                : `You don't have any ${activeTab.toLowerCase()} bookings at the moment.`}
+            </p>
+            {activeTab === 'All' && (
+              <button
+                onClick={() => navigate('/services')}
+                className="bg-secondary text-white px-8 py-3.5 rounded-btn font-bold hover:bg-secondary-hover shadow-lg transition-all hover:-translate-y-1"
+              >
+                Browse Services
+              </button>
+            )}
           </div>
         ) : (
-          <div className="grid gap-4">
-            {bookings.map((booking) => (
+          <div className="grid gap-6 fade-in">
+            {filteredBookings.map((booking) => (
               <BookingCard
                 key={booking._id}
                 booking={booking}
