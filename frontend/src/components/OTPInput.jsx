@@ -25,7 +25,7 @@ export default function OTPInput({ length = 6, onChange }) {
   };
 
   return (
-    <div className="flex gap-3 justify-center mb-6">
+    <div className="otp-container">
       {otp.map((data, index) => (
         <input
           key={index}
@@ -34,7 +34,7 @@ export default function OTPInput({ length = 6, onChange }) {
           value={data}
           onChange={(e) => handleChange(e, index)}
           onKeyDown={(e) => handleKeyDown(e, index)}
-          className="w-12 h-14 text-center text-xl font-extrabold bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-primary focus:bg-white focus:outline-none transition-colors shadow-sm"
+          className="otp-box"
           maxLength={1}
           placeholder="-"
         />

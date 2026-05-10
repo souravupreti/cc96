@@ -32,9 +32,9 @@ describe('VendorLogin', () => {
     expect(screen.getByPlaceholderText('Enter password')).toBeInTheDocument();
   });
 
-  it('shows test credentials', () => {
+  it('shows info about credentials', () => {
     renderVendorLogin();
-    expect(screen.getByText(/vendor@test.com/)).toBeInTheDocument();
+    expect(screen.getByText(/Credentials provided by ServiceHub admin/)).toBeInTheDocument();
   });
 
   it('shows error with empty fields', () => {

@@ -4,7 +4,7 @@ import BookingCard from '../components/BookingCard';
 
 const mockBooking = {
   _id: 'b1',
-  serviceId: { name: 'Home Cleaning', icon: '🧹' },
+  serviceId: { name: 'Home Cleaning', icon: 'Home' },
   customerId: { name: 'John Doe' },
   address: '123 Main St',
   date: '2026-06-01',
@@ -36,13 +36,13 @@ describe('BookingCard', () => {
 
   it('shows Accept button for vendor when Pending', () => {
     render(<BookingCard booking={mockBooking} isVendor={true} onAccept={vi.fn()} onDeliver={vi.fn()} />);
-    expect(screen.getByText(/Accept Request/)).toBeInTheDocument();
+    expect(screen.getByText(/Accept/)).toBeInTheDocument();
   });
 
   it('shows Deliver button for vendor when Accepted', () => {
     const accepted = { ...mockBooking, status: 'Accepted' };
     render(<BookingCard booking={accepted} isVendor={true} onAccept={vi.fn()} onDeliver={vi.fn()} />);
-    expect(screen.getByText(/Mark as Delivered/)).toBeInTheDocument();
+    expect(screen.getByText(/Mark Delivered/)).toBeInTheDocument();
   });
 
   it('hides action buttons for customers', () => {

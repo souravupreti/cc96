@@ -18,22 +18,22 @@ describe('StatusBadge', () => {
     expect(screen.getByText(/Delivered/)).toBeInTheDocument();
   });
 
-  it('applies orange styling for Pending', () => {
+  it('applies pending styling for Pending', () => {
     const { container } = render(<StatusBadge status="Pending" />);
     const badge = container.querySelector('span');
-    expect(badge.className).toContain('orange');
+    expect(badge.className).toContain('badge-pending');
   });
 
-  it('applies blue styling for Accepted', () => {
+  it('applies accepted styling for Accepted', () => {
     const { container } = render(<StatusBadge status="Accepted" />);
     const badge = container.querySelector('span');
-    expect(badge.className).toContain('blue');
+    expect(badge.className).toContain('badge-accepted');
   });
 
-  it('applies green styling for Delivered', () => {
+  it('applies delivered styling for Delivered', () => {
     const { container } = render(<StatusBadge status="Delivered" />);
     const badge = container.querySelector('span');
-    expect(badge.className).toContain('green');
+    expect(badge.className).toContain('badge-delivered');
   });
 
   it('handles unknown status gracefully', () => {

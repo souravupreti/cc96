@@ -34,12 +34,12 @@ describe('Login', () => {
 
   it('renders login button', () => {
     renderLogin();
-    expect(screen.getByText('Secure Login')).toBeInTheDocument();
+    expect(screen.getByText('Login Now')).toBeInTheDocument();
   });
 
   it('shows error with empty fields', async () => {
     renderLogin();
-    fireEvent.click(screen.getByText('Secure Login'));
+    fireEvent.click(screen.getByText('Login Now'));
     expect(screen.getByText('Mobile and password required')).toBeInTheDocument();
   });
 
@@ -50,6 +50,6 @@ describe('Login', () => {
 
   it('renders vendor login link', () => {
     renderLogin();
-    expect(screen.getByText('Switch to Vendor Login')).toBeInTheDocument();
+    expect(screen.getByText(/Are you a Vendor/)).toBeInTheDocument();
   });
 });

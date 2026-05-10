@@ -1,8 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../utils/api';
 import OTPInput from '../components/OTPInput';
 import { AuthContext } from '../context/AuthContext';
+import { UserPlus, Phone, Lock, User, MessageSquare, ChevronRight, ArrowLeft } from 'lucide-react';
 
 export default function Signup() {
   const [step, setStep] = useState(1);
@@ -12,8 +13,17 @@ export default function Signup() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(30);
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let interval;
+    if (step === 2 && timer > 0) {
+      interval = setInterval(() => setTimer(prev => prev - 1), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [step, timer]);
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -27,6 +37,7 @@ export default function Signup() {
     try {
       await api.post('/api/auth/customer/send-otp', { mobile });
       setStep(2);
+      setTimer(30);
     } catch (err) {
       setError(err.response?.data?.error || 'Error sending OTP');
     } finally {
@@ -73,112 +84,106 @@ export default function Signup() {
     }
   };
 
-  const stepLabels = ['Mobile', 'Verify', 'Details'];
-
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-app-bg flex items-center justify-center px-4 py-12 fade-in">
-      <div className="bg-white rounded-premium shadow-[0_20px_60px_rgba(108,59,245,0.08)] max-w-md w-full border border-gray-100 overflow-hidden">
-        {/* Gradient Header */}
-        <div className="bg-gradient-to-br from-primary to-[#9B6BFF] p-8 text-center text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
-          <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 bg-black opacity-10 rounded-full blur-2xl"></div>
-          <div className="relative z-10">
-            <h2 className="text-3xl font-extrabold mb-2 tracking-tight">Create Account</h2>
-            <p className="text-white/80 text-sm">Join the best home service platform</p>
-          </div>
+    <div className="auth-wrapper" style={{ paddingTop: '80px' }}>
+      <div className="auth-card">
+        <div className="auth-header">
+          {step === 2 ? <MessageSquare size={48} color="white" style={{ marginBottom: '12px' }} /> : <UserPlus size={48} color="white" style={{ marginBottom: '12px' }} />}
+          <h2>{step === 2 ? 'Verify OTP' : 'Join ServiceHub'}</h2>
+          <p>{step === 2 ? `Enter code sent to +91 ${mobile}` : 'Professional services at your fingertips'}</p>
         </div>
 
-        <div className="p-8">
-          {/* Step Indicator */}
-          <div className="flex items-center justify-center gap-2 mb-10">
-            {stepLabels.map((label, i) => (
-              <div key={label} className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all shadow-sm ${
-                  step > i + 1 ? 'bg-[#10b981] text-white' :
-                  step === i + 1 ? 'bg-primary text-white ring-4 ring-primary/20' : 'bg-gray-100 text-gray-400'
-                }`}>
-                  {step > i + 1 ? '✓' : i + 1}
-                </div>
-                {i < 2 && <div className={`w-10 h-1 rounded-full ${step > i + 1 ? 'bg-[#10b981]' : 'bg-gray-100'}`} />}
-              </div>
-            ))}
-          </div>
-
-          {error && <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-100 text-sm font-medium flex items-center gap-2 fade-in">
-            <span>⚠️</span> {error}
-          </div>}
+        <div className="auth-body">
+          {error && (
+            <div style={{ color: '#E65100', background: '#FFF3E0', padding: '12px', borderRadius: '8px', marginBottom: '20px', fontSize: '14px', fontWeight: '500' }}>
+              {error}
+            </div>
+          )}
 
           {step === 1 && (
-            <form onSubmit={handleSendOtp} className="fade-in">
-              <label className="block mb-2 font-bold text-app-text text-sm ml-1">Mobile Number</label>
-              <input
-                type="text"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                placeholder="Enter 10-digit number"
-                className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl mb-6 focus:outline-none focus:border-primary focus:bg-white transition-all text-lg"
-                maxLength="10"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-secondary text-white py-4 rounded-btn font-bold hover:bg-secondary-hover shadow-[0_8px_20px_rgba(255,107,53,0.25)] hover:shadow-[0_8px_25px_rgba(255,107,53,0.35)] disabled:opacity-50 transition-all duration-300 text-lg hover:-translate-y-0.5"
-              >
-                {loading ? 'Sending...' : 'Get OTP'}
+            <form onSubmit={handleSendOtp}>
+              <div className="form-group">
+                <label>Mobile Number</label>
+                <div className="input-group">
+                  <Phone size={20} className="icon" />
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    placeholder="Enter 10-digit mobile"
+                    maxLength="10"
+                  />
+                </div>
+              </div>
+              <button type="submit" className="btn-premium btn-premium-orange" style={{ width: '100%', marginTop: '10px' }} disabled={loading}>
+                {loading ? 'Sending...' : 'Get OTP'} <ChevronRight size={20} />
               </button>
             </form>
           )}
 
           {step === 2 && (
-            <form onSubmit={handleVerifyOtp} className="fade-in">
-              <label className="block mb-6 font-bold text-app-text text-sm text-center">
-                Enter OTP sent to <span className="text-primary">+91 {mobile}</span>
-              </label>
+            <form onSubmit={handleVerifyOtp}>
               <OTPInput onChange={setOtp} />
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-secondary text-white py-4 rounded-btn font-bold hover:bg-secondary-hover shadow-[0_8px_20px_rgba(255,107,53,0.25)] hover:shadow-[0_8px_25px_rgba(255,107,53,0.35)] disabled:opacity-50 transition-all duration-300 text-lg hover:-translate-y-0.5"
-              >
-                {loading ? 'Verifying...' : 'Verify OTP'}
+              <button type="submit" className="btn-premium btn-premium-orange" disabled={loading} style={{ width: '100%', marginTop: '20px' }}>
+                {loading ? 'Verifying...' : 'Verify OTP'} <ChevronRight size={20} />
               </button>
-              <button type="button" onClick={() => setStep(1)} className="w-full text-gray-400 font-medium text-sm mt-6 hover:text-primary transition-colors">
-                ← Change number
+              
+              <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                {timer > 0 ? (
+                  <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Resend OTP in <span style={{ fontWeight: '700', color: 'var(--purple)' }}>{timer}s</span></p>
+                ) : (
+                  <button type="button" onClick={handleSendOtp} style={{ background: 'none', border: 'none', color: 'var(--purple)', fontWeight: '700', cursor: 'pointer' }}>Resend OTP</button>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                style={{ width: '100%', background: 'none', border: 'none', color: 'var(--gray)', marginTop: '16px', cursor: 'pointer', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+              >
+                <ArrowLeft size={16} /> Change Mobile Number
               </button>
             </form>
           )}
 
           {step === 3 && (
-            <form onSubmit={handleRegister} className="fade-in">
-              <label className="block mb-2 font-bold text-app-text text-sm ml-1">Full Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Doe"
-                className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl mb-5 focus:outline-none focus:border-primary focus:bg-white transition-all"
-              />
-              <label className="block mb-2 font-bold text-app-text text-sm ml-1">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create password"
-                className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl mb-8 focus:outline-none focus:border-primary focus:bg-white transition-all"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-secondary text-white py-4 rounded-btn font-bold hover:bg-secondary-hover shadow-[0_8px_20px_rgba(255,107,53,0.25)] hover:shadow-[0_8px_25px_rgba(255,107,53,0.35)] disabled:opacity-50 transition-all duration-300 text-lg hover:-translate-y-0.5"
-              >
-                {loading ? 'Creating...' : 'Complete Signup'}
+            <form onSubmit={handleRegister}>
+              <div className="form-group">
+                <label>Full Name</label>
+                <div className="input-group">
+                  <User size={20} className="icon" />
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Create Password</label>
+                <div className="input-group">
+                  <Lock size={20} className="icon" />
+                  <input
+                    type="password"
+                    className="input-field"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Min 6 characters"
+                  />
+                </div>
+              </div>
+              <button type="submit" className="btn-premium btn-premium-orange" style={{ width: '100%', marginTop: '10px' }} disabled={loading}>
+                {loading ? 'Creating...' : 'Create Account'} <ChevronRight size={20} />
               </button>
             </form>
           )}
 
-          <div className="mt-8 pt-8 border-t border-gray-100 text-center">
-            <p className="text-gray-500 font-medium">
-              Already have an account? <Link to="/login" className="text-primary font-bold hover:text-primary-hover">Login</Link>
+          <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px' }}>
+            <p style={{ color: 'var(--gray)' }}>
+              Already have an account? <Link to="/login" style={{ color: 'var(--purple)', fontWeight: '700', textDecoration: 'none' }}>Login</Link>
             </p>
           </div>
         </div>

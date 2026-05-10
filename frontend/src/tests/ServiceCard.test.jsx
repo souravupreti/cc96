@@ -7,7 +7,7 @@ const mockService = {
   name: 'Home Cleaning',
   description: 'Professional cleaning',
   basePrice: 500,
-  icon: '🧹'
+  icon: 'Home'
 };
 
 describe('ServiceCard', () => {
@@ -24,11 +24,6 @@ describe('ServiceCard', () => {
   it('renders service description', () => {
     render(<ServiceCard service={mockService} onClick={vi.fn()} />);
     expect(screen.getByText('Professional cleaning')).toBeInTheDocument();
-  });
-
-  it('renders service icon', () => {
-    render(<ServiceCard service={mockService} onClick={vi.fn()} />);
-    expect(screen.getByText('🧹')).toBeInTheDocument();
   });
 
   it('calls onClick when clicked', async () => {

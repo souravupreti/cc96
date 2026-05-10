@@ -23,27 +23,21 @@ const renderSignup = () => {
 describe('Signup', () => {
   it('renders signup heading', () => {
     renderSignup();
-    expect(screen.getByText('Create Account')).toBeInTheDocument();
+    expect(screen.getByText('Join ServiceHub')).toBeInTheDocument();
   });
 
   it('renders step 1 - mobile input', () => {
     renderSignup();
-    expect(screen.getByPlaceholderText(/10-digit number/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter 10-digit mobile/)).toBeInTheDocument();
     expect(screen.getByText('Get OTP')).toBeInTheDocument();
   });
 
   it('validates mobile number format', async () => {
     renderSignup();
-    const input = screen.getByPlaceholderText(/10-digit number/);
+    const input = screen.getByPlaceholderText(/Enter 10-digit mobile/);
     fireEvent.change(input, { target: { value: '123' } });
     fireEvent.click(screen.getByText('Get OTP'));
     expect(screen.getByText('Mobile must be 10 digits')).toBeInTheDocument();
-  });
-
-  it('renders step indicator', () => {
-    renderSignup();
-    // Step 1 should be active
-    expect(screen.getByText('1')).toBeInTheDocument();
   });
 
   it('renders login link', () => {

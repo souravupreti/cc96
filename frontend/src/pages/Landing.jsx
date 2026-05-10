@@ -2,11 +2,46 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import api from '../utils/api';
+import {
+  Search, Calendar, CheckCircle, Star, Zap, Home, Wrench,
+  Paintbrush, Bug, ArrowRight, Play, Shield, Clock, ThumbsUp,
+  ChevronRight, MapPin, Phone, Mail
+} from 'lucide-react';
+
+const FacebookIcon = ({ size = 24, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
+
+const TwitterIcon = ({ size = 24, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+  </svg>
+);
+
+const InstagramIcon = ({ size = 24, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+const LinkedinIcon = ({ size = 24, color = "currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
 
 export default function Landing() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const [services, setServices] = useState([]);
+  const [selectedService, setSelectedService] = useState('');
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -15,267 +50,320 @@ export default function Landing() {
         setServices(res.data.services || []);
       } catch {
         setServices([
-          { _id: '1', name: 'Deep Cleaning', description: 'Intensive home cleaning', basePrice: 999, icon: '✨', color: 'bg-blue-100' },
-          { _id: '2', name: 'Plumbing', description: 'Expert repairs & fixes', basePrice: 499, icon: '🔧', color: 'bg-orange-100' },
-          { _id: '3', name: 'Electrician', description: 'Wiring & appliance setup', basePrice: 399, icon: '⚡', color: 'bg-yellow-100' },
-          { _id: '4', name: 'AC Service', description: 'Cooling & maintenance', basePrice: 799, icon: '❄️', color: 'bg-cyan-100' },
-          { _id: '5', name: 'Pest Control', description: 'Complete pest management', basePrice: 899, icon: '🛡️', color: 'bg-green-100' }
+          { _id: '1', name: 'Deep Cleaning', description: 'Intensive home cleaning', basePrice: 999, icon: 'Home' },
+          { _id: '2', name: 'Plumbing', description: 'Expert repairs & fixes', basePrice: 499, icon: 'Wrench' },
+          { _id: '3', name: 'Electrician', description: 'Wiring & appliance setup', basePrice: 399, icon: 'Zap' },
+          { _id: '4', name: 'Painting', description: 'Interior & exterior painting', basePrice: 799, icon: 'Paintbrush' },
+          { _id: '5', name: 'Pest Control', description: 'Complete pest management', basePrice: 899, icon: 'Bug' }
         ]);
       }
     };
     fetchServices();
   }, []);
 
-  const handleServiceClick = (service) => {
+  const handleServiceClick = (serviceId) => {
     if (auth.isAuthenticated && auth.userType === 'customer') {
-      navigate('/booking', { state: { serviceId: service._id } });
+      navigate('/booking', { state: { serviceId } });
     } else {
       navigate('/login');
     }
   };
 
-  const getServiceColor = (index) => {
-    const colors = ['bg-blue-50 text-blue-600', 'bg-orange-50 text-orange-600', 'bg-purple-50 text-purple-600', 'bg-green-50 text-green-600', 'bg-pink-50 text-pink-600'];
-    return colors[index % colors.length];
+  const getServiceIcon = (iconName) => {
+    switch (iconName) {
+      case 'Home': return <Home size={32} color="var(--purple)" />;
+      case 'Wrench': return <Wrench size={32} color="var(--purple)" />;
+      case 'Zap': return <Zap size={32} color="var(--purple)" />;
+      case 'Paintbrush': return <Paintbrush size={32} color="var(--purple)" />;
+      case 'Bug': return <Bug size={32} color="var(--purple)" />;
+      default: return <Zap size={32} color="var(--purple)" />;
+    }
   };
 
   return (
-    <div className="fade-in">
+    <div className="page" style={{ paddingTop: 0 }}>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-app-bg pt-12 pb-24 md:pt-20 md:pb-32 px-4">
-        {/* Background Blobs */}
-        <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-primary rounded-full mix-blend-multiply filter blur-[100px] opacity-20"></div>
-        <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 bg-secondary rounded-full mix-blend-multiply filter blur-[100px] opacity-20"></div>
-
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
-          <div className="text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm border border-gray-100 text-sm font-semibold text-primary mb-6">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-              </span>
-              #1 Home Service Platform
+      <section style={{
+        background: 'linear-gradient(135deg, #1A1A2E 0%, #2D1B69 50%, #4B2ED4 100%)',
+        padding: '160px 0 100px',
+        color: 'white',
+        overflow: 'hidden',
+        position: 'relative'
+      }}>
+        <div className="container hero-container" style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '60px', alignItems: 'center' }}>
+          <div className="hero-left">
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              padding: '8px 20px',
+              borderRadius: '50px',
+              border: '1px solid rgba(255,255,255,0.2)',
+              fontSize: '14px',
+              fontWeight: '600',
+              marginBottom: '24px'
+            }}>
+              <Shield size={16} /> Trusted by 10,000+ customers
             </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-app-text leading-[1.1] mb-6 tracking-tight">
-              Your Home, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#9B6BFF]">Perfectly Maintained</span>
+            <h1 className="hero-h1" style={{ fontSize: '64px', fontWeight: '800', lineHeight: '1.1', marginBottom: '24px' }}>
+              Book Home Services <br />
+              <span style={{
+                background: 'linear-gradient(135deg, #FF6B35, #FFD93D)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>You Can Trust</span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-500 mb-10 max-w-lg mx-auto md:mx-0 leading-relaxed">
-              Book expert professionals for cleaning, repair, and maintenance. Trusted, verified, and delivered to your doorstep.
+            <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', maxWidth: '480px', marginBottom: '40px' }}>
+              From cleaning to repairs, get expert professionals at your doorstep. Fast, reliable, and premium quality guaranteed.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <Link to="/services" className="px-8 py-4 rounded-btn font-bold text-white bg-secondary hover:bg-secondary-hover shadow-[0_8px_24px_rgba(255,107,53,0.3)] transition-all duration-300 text-lg hover:-translate-y-1">
-                Book a Service
-              </Link>
-              <a href="#how-it-works" className="px-8 py-4 rounded-btn font-bold text-gray-700 bg-white hover:bg-gray-50 shadow-sm border border-gray-100 transition-all duration-300 text-lg flex items-center justify-center gap-2">
-                <span>▶</span> Watch How it Works
+            <div className="hero-btns" style={{ display: 'flex', gap: '16px' }}>
+              <button className="btn-premium-orange btn-premium" onClick={() => navigate('/services')}>
+                Book a Service <ArrowRight size={20} />
+              </button>
+              <a href="#how-it-works" className="btn-outline" style={{ borderColor: 'white', color: 'white' }}>
+                <Play size={20} fill="white" /> How it Works
               </a>
+            </div>
+            <div className="hero-stats" style={{ display: 'flex', gap: '40px', marginTop: '60px', opacity: '0.9' }}>
+              <div><div style={{ fontSize: '24px', fontWeight: '800' }}>10K+</div><div style={{ fontSize: '14px', color: '#A0AEC0' }}>Customers</div></div>
+              <div style={{ width: '1px', background: 'rgba(255,255,255,0.2)' }} className="geometric-shape"></div>
+              <div><div style={{ fontSize: '24px', fontWeight: '800' }}>500+</div><div style={{ fontSize: '14px', color: '#A0AEC0' }}>Vendors</div></div>
+              <div style={{ width: '1px', background: 'rgba(255,255,255,0.2)' }} className="geometric-shape"></div>
+              <div><div style={{ fontSize: '24px', fontWeight: '800' }}>4.8</div><div style={{ fontSize: '14px', color: '#A0AEC0' }}>Rating</div></div>
             </div>
           </div>
 
-          {/* Right Floating Mockup */}
-          <div className="relative hidden md:block animate-float">
-            <div className="absolute top-10 -left-12 bg-white p-4 rounded-premium shadow-premium z-20 flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-xl">⭐</div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">Customer Rating</p>
-                <p className="font-extrabold text-lg text-app-text">4.9/5.0</p>
+          <div className="hero-right animate-float">
+            <div className="card-glass" style={{ padding: '40px' }}>
+              <h3 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '24px', color: 'var(--dark)' }}>Book a Service</h3>
+              <div className="form-group">
+                <label style={{ color: 'var(--dark)' }}>Select Service</label>
+                <select
+                  className="input-field"
+                  style={{ paddingLeft: '18px' }}
+                  value={selectedService}
+                  onChange={(e) => setSelectedService(e.target.value)}
+                >
+                  <option value="">Choose service...</option>
+                  {services.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
+                </select>
               </div>
-            </div>
-            <div className="absolute bottom-20 -right-8 bg-white p-4 rounded-premium shadow-premium z-20 flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-xl">✓</div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">Services Done</p>
-                <p className="font-extrabold text-lg text-app-text">50,000+</p>
+              <div className="form-group">
+                <label style={{ color: 'var(--dark)' }}>Preferred Date</label>
+                <input type="date" className="input-field" style={{ paddingLeft: '18px' }} />
               </div>
-            </div>
-            
-            {/* Phone Mockup CSS representation */}
-            <div className="w-[320px] h-[640px] bg-white rounded-[40px] shadow-2xl border-[8px] border-gray-900 mx-auto relative overflow-hidden flex flex-col">
-              <div className="absolute top-0 w-full h-6 bg-gray-900 rounded-b-3xl z-30 flex justify-center">
-                <div className="w-20 h-4 bg-black rounded-b-xl"></div>
-              </div>
-              <div className="bg-primary pt-12 pb-6 px-6 text-white rounded-b-3xl">
-                <p className="opacity-80 text-sm">Location</p>
-                <p className="font-bold flex items-center gap-1">New Delhi <span className="text-xs">▼</span></p>
-              </div>
-              <div className="flex-1 bg-gray-50 p-4">
-                <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
-                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                  <div className="h-3 bg-gray-100 rounded w-3/4"></div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-orange-50 h-24 rounded-xl"></div>
-                  <div className="bg-blue-50 h-24 rounded-xl"></div>
-                  <div className="bg-purple-50 h-24 rounded-xl"></div>
-                  <div className="bg-green-50 h-24 rounded-xl"></div>
-                </div>
-                <div className="bg-white p-4 rounded-xl shadow-sm">
-                  <div className="h-4 bg-gray-200 rounded w-1/3 mb-3"></div>
-                  <div className="flex gap-3">
-                     <div className="w-12 h-12 bg-gray-100 rounded-full"></div>
-                     <div className="flex-1">
-                       <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
-                       <div className="h-3 bg-gray-100 rounded w-1/2"></div>
-                     </div>
-                  </div>
-                </div>
-              </div>
+              <button
+                className="btn-premium-orange btn-premium"
+                style={{ width: '100%', marginTop: '10px' }}
+                onClick={() => selectedService && handleServiceClick(selectedService)}
+              >
+                Check Availability
+              </button>
+              <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--gray)', marginTop: '16px' }}>
+                Free cancellation • No charges now
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Stats Bar */}
-      <section className="relative z-20 -mt-10 px-4">
-        <div className="max-w-6xl mx-auto bg-white rounded-premium shadow-premium p-8 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-gray-100">
-          <div className="text-center px-4">
-            <div className="text-4xl font-extrabold text-primary mb-1">10K+</div>
-            <div className="text-gray-500 font-medium">Happy Customers</div>
+      <section style={{ background: 'white', padding: '60px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+        <div className="container stats-bar-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', textAlign: 'center' }}>
+          <div className="stats-bar-item">
+            <div className="text-gradient" style={{ fontSize: '32px', fontWeight: '800' }}>98%</div>
+            <div style={{ color: 'var(--gray)', fontSize: '14px' }}>Satisfaction Rate</div>
           </div>
-          <div className="text-center px-4">
-            <div className="text-4xl font-extrabold text-primary mb-1">500+</div>
-            <div className="text-gray-500 font-medium">Verified Vendors</div>
+          <div className="stats-bar-item" style={{ borderLeft: '1px solid #EEE' }}>
+            <div className="text-gradient" style={{ fontSize: '32px', fontWeight: '800' }}>24/7</div>
+            <div style={{ color: 'var(--gray)', fontSize: '14px' }}>Customer Support</div>
           </div>
-          <div className="text-center px-4">
-            <div className="text-4xl font-extrabold text-primary mb-1">50K+</div>
-            <div className="text-gray-500 font-medium">Services Delivered</div>
+          <div className="stats-bar-item" style={{ borderLeft: '1px solid #EEE' }}>
+            <div className="text-gradient" style={{ fontSize: '32px', fontWeight: '800' }}>50+</div>
+            <div style={{ color: 'var(--gray)', fontSize: '14px' }}>Service Categories</div>
           </div>
-          <div className="text-center px-4">
-            <div className="text-4xl font-extrabold text-primary mb-1">4.8★</div>
-            <div className="text-gray-500 font-medium">Average Rating</div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-24 px-4 bg-app-bg">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-app-text mb-4">How it works</h2>
-            <div className="w-20 h-1.5 bg-secondary rounded-full"></div>
-            <p className="text-gray-500 text-lg mt-6 max-w-xl">Get your home services sorted in three simple, hassle-free steps.</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Dotted Line connecting cards (Desktop) */}
-            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 border-t-2 border-dashed border-gray-300 z-0"></div>
-
-            {[
-              { step: '1', icon: '🔍', title: 'Choose a Service', desc: 'Browse through our extensive list of verified home services.' },
-              { step: '2', icon: '📅', title: 'Pick a Time', desc: 'Select a convenient date and time for the professional to arrive.' },
-              { step: '3', icon: '✨', title: 'Relax & Enjoy', desc: 'Our expert gets the job done while you sit back and relax.' }
-            ].map((item, i) => (
-              <div key={item.step} className="bg-white p-8 rounded-premium shadow-sm border border-gray-100 relative z-10 hover:-translate-y-2 hover:shadow-premium transition-all duration-300 group">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary to-[#9B6BFF] rounded-full flex items-center justify-center text-white font-bold text-xl absolute -top-6 shadow-lg group-hover:scale-110 transition-transform">
-                  {item.step}
-                </div>
-                <div className="text-5xl mb-6 mt-4">{item.icon}</div>
-                <h3 className="text-xl font-bold text-app-text mb-3">{item.title}</h3>
-                <p className="text-gray-500 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+          <div className="stats-bar-item" style={{ borderLeft: '1px solid #EEE' }}>
+            <div className="text-gradient" style={{ fontSize: '32px', fontWeight: '800' }}>Verified</div>
+            <div style={{ color: 'var(--gray)', fontSize: '14px' }}>Professional Staff</div>
           </div>
         </div>
       </section>
 
-      {/* Popular Services Section */}
-      <section className="py-24 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-app-text mb-4">Popular Services</h2>
-              <div className="w-20 h-1.5 bg-secondary rounded-full"></div>
+      {/* How It Works */}
+      <section id="how-it-works" className="section" style={{ background: '#F4F6FF' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <span style={{ color: 'var(--purple)', fontWeight: '700', fontSize: '14px', letterSpacing: '2px' }}>SIMPLE PROCESS</span>
+            <h2 style={{ fontSize: '42px', fontWeight: '800', marginTop: '10px' }}>How It Works</h2>
+          </div>
+          <div className="how-it-works-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px', position: 'relative' }}>
+            <div className="card-3d" style={{ textAlign: 'center', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--purple-light)', color: 'var(--purple)', padding: '4px 12px', borderRadius: '50px', fontSize: '12px', fontWeight: '700' }}>Step 01</div>
+              <div className="icon-box"><Search size={32} color="var(--purple)" /></div>
+              <h3 style={{ marginBottom: '12px' }}>Choose a Service</h3>
+              <p style={{ color: 'var(--gray)', fontSize: '15px' }}>Browse through our verified services and pick what you need.</p>
             </div>
-            <Link to="/services" className="text-primary font-semibold hover:text-primary-hover flex items-center gap-1">
-              View All <span>→</span>
+            <div className="card-3d" style={{ textAlign: 'center', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--purple-light)', color: 'var(--purple)', padding: '4px 12px', borderRadius: '50px', fontSize: '12px', fontWeight: '700' }}>Step 02</div>
+              <div className="icon-box icon-box-orange"><Calendar size={32} color="var(--orange)" /></div>
+              <h3 style={{ marginBottom: '12px' }}>Pick a Time</h3>
+              <p style={{ color: 'var(--gray)', fontSize: '15px' }}>Schedule a visit at your convenience. We work around you.</p>
+            </div>
+            <div className="card-3d" style={{ textAlign: 'center', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--purple-light)', color: 'var(--purple)', padding: '4px 12px', borderRadius: '50px', fontSize: '12px', fontWeight: '700' }}>Step 03</div>
+              <div className="icon-box icon-box-green"><CheckCircle size={32} color="#2E7D32" /></div>
+              <h3 style={{ marginBottom: '12px' }}>Relax & Enjoy</h3>
+              <p style={{ color: 'var(--gray)', fontSize: '15px' }}>Our pro arrives and handles everything while you sit back.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Services */}
+      <section className="section" style={{ background: 'white' }}>
+        <div className="container" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px' }}>
+            <div>
+              <h2 style={{ fontSize: '36px', fontWeight: '800' }}>Popular Services</h2>
+              <p style={{ color: 'var(--gray)', marginTop: '8px' }}>Top-rated professional services for your home</p>
+            </div>
+            <Link to="/services" style={{ color: 'var(--purple)', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              View All Services <ChevronRight size={20} />
             </Link>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {services.slice(0, 5).map((service, index) => {
-              const colorClass = getServiceColor(index);
-              return (
-                <div
-                  key={service._id}
-                  onClick={() => handleServiceClick(service)}
-                  className="bg-white rounded-premium border border-gray-100 p-6 cursor-pointer hover:shadow-premium hover:-translate-y-1 hover:border-primary/20 transition-all duration-300 group flex flex-col h-full"
+          <div className="services-marquee-container">
+            <div className="services-marquee-track">
+              {[...services, ...services].map((service, index) => (
+                <div 
+                  key={`${service._id}-${index}`} 
+                  className="card-3d service-card-premium marquee-card" 
+                  style={{ 
+                    padding: '24px', 
+                    cursor: 'pointer', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '24px',
+                    textAlign: 'left',
+                    flexShrink: 0
+                  }} 
+                  onClick={() => handleServiceClick(service._id)}
                 >
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-5 group-hover:scale-110 transition-transform duration-300 ${colorClass}`}>
-                    {service.icon}
+                  <div className="icon-box service-card-icon-box" style={{ margin: 0, flexShrink: 0 }}>{getServiceIcon(service.icon)}</div>
+                  <div style={{ flex: 1 }}>
+                    <h3 className="service-card-name" style={{ fontSize: '20px', marginBottom: '4px', fontWeight: '800' }}>{service.name}</h3>
+                    <p style={{ color: 'var(--gray)', fontSize: '14px' }}>{service.description}</p>
                   </div>
-                  <h3 className="text-lg font-bold text-app-text mb-2">{service.name}</h3>
-                  <p className="text-gray-500 text-sm mb-6 flex-1">{service.description}</p>
-                  <div className="flex items-center justify-between mt-auto">
-                    <span className="text-xl font-extrabold text-app-text">₹{service.basePrice}</span>
-                    <button className="opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 bg-secondary text-white px-4 py-2 rounded-full text-sm font-bold transition-all duration-300">
-                      Book
-                    </button>
+                  <div style={{ textAlign: 'right', minWidth: '120px' }}>
+                    <div className="text-gradient service-card-price" style={{ fontSize: '24px', fontWeight: '800', marginBottom: '8px' }}>₹{service.basePrice}</div>
+                    <button className="btn-premium-orange btn-premium service-card-btn" style={{ padding: '10px 20px', fontSize: '13px' }}>Book Now</button>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Footer Section */}
-      <section className="bg-primary py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-6">Ready to upgrade your home?</h2>
-          <p className="text-primary-100 text-lg mb-10 opacity-90 max-w-2xl mx-auto">
-            Join thousands of satisfied customers who trust ServiceHub for their everyday home needs.
-          </p>
-          <Link
-            to={auth.isAuthenticated ? '/services' : '/signup'}
-            className="inline-block px-10 py-4 rounded-btn font-bold text-primary bg-white hover:bg-gray-50 shadow-xl transition-all duration-300 text-lg hover:-translate-y-1"
-          >
-            {auth.isAuthenticated ? 'Browse All Services' : 'Get Started Free'}
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-[#1A1A2E] text-gray-400 py-16 px-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-12 border-b border-gray-800 pb-12">
-          <div className="col-span-1 md:col-span-2">
-            <div className="text-3xl font-extrabold text-white mb-4 flex items-center gap-2">
-              <span className="text-primary">⚡</span> ServiceHub
-            </div>
-            <p className="text-sm max-w-sm leading-relaxed mb-6">
-              The most trusted professional home services platform. Quality, reliability, and satisfaction delivered to your doorstep.
-            </p>
-            <div className="flex gap-4">
-              {['Facebook', 'Twitter', 'Instagram'].map(social => (
-                <div key={social} className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors cursor-pointer text-white">
-                  {social[0]}
                 </div>
               ))}
             </div>
           </div>
-          <div>
-            <h4 className="text-white font-bold mb-6">Quick Links</h4>
-            <ul className="space-y-3 text-sm">
-              <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
-              <li><Link to="/services" className="hover:text-primary transition-colors">All Services</Link></li>
-              <li><Link to="/login" className="hover:text-primary transition-colors">Customer Login</Link></li>
-              <li><Link to="/vendor-login" className="hover:text-primary transition-colors">Vendor Portal</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-6">Contact</h4>
-            <ul className="space-y-3 text-sm">
-              <li>support@servicehub.com</li>
-              <li>1-800-SERVICE</li>
-              <li>New Delhi, India</li>
-            </ul>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="section" style={{ background: '#1A1A2E', color: 'white' }}>
+        <div className="container">
+          <h2 style={{ fontSize: '42px', fontWeight: '800', textAlign: 'center', marginBottom: '60px' }}>Why Thousands Choose ServiceHub</h2>
+          <div className="why-choose-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
+            <div className="card-glass" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
+              <Shield size={40} color="white" style={{ marginBottom: '20px' }} />
+              <h3 style={{ fontSize: '20px', marginBottom: '12px' }}>Verified Pros</h3>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>Every professional is background checked and skill-tested.</p>
+            </div>
+            <div className="card-glass" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
+              <Clock size={40} color="white" style={{ marginBottom: '20px' }} />
+              <h3 style={{ fontSize: '20px', marginBottom: '12px' }}>On-Time Arrival</h3>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>We value your time. Our pros arrive exactly when scheduled.</p>
+            </div>
+            <div className="card-glass" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
+              <Star size={40} color="white" style={{ marginBottom: '20px' }} />
+              <h3 style={{ fontSize: '20px', marginBottom: '12px' }}>Quality Guaranteed</h3>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>Not happy with the service? We will make it right, guaranteed.</p>
+            </div>
+            <div className="card-glass" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
+              <ThumbsUp size={40} color="white" style={{ marginBottom: '20px' }} />
+              <h3 style={{ fontSize: '20px', marginBottom: '12px' }}>Transparent Pricing</h3>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>No hidden costs. See exactly what you pay for upfront.</p>
+            </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto text-center text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>© 2026 ServiceHub. All rights reserved.</p>
-          <div className="flex gap-6">
-            <span className="hover:text-white cursor-pointer">Privacy Policy</span>
-            <span className="hover:text-white cursor-pointer">Terms of Service</span>
+      </section>
+
+      {/* CTA Section */}
+      <section className="section" style={{
+        background: 'linear-gradient(135deg, var(--purple), var(--orange))',
+        textAlign: 'center',
+        color: 'white',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{ position: 'absolute', top: '-100px', left: '-100px', width: '300px', height: '300px', background: 'white', opacity: '0.1', borderRadius: '50%' }} className="bg-shape"></div>
+        <div style={{ position: 'absolute', bottom: '-100px', right: '-100px', width: '300px', height: '300px', background: 'white', opacity: '0.1', borderRadius: '50%' }} className="bg-shape"></div>
+        <div className="container" style={{ position: 'relative', zIndex: '1' }}>
+          <h2 className="cta-h2" style={{ fontSize: '44px', fontWeight: '800', marginBottom: '20px' }}>Ready for a Better Home Experience?</h2>
+          <p className="cta-p" style={{ fontSize: '18px', color: 'rgba(255,255,255,0.9)', maxWidth: '600px', margin: '0 auto 40px' }}>
+            Join 10,000+ happy customers who trust ServiceHub for their professional home maintenance.
+          </p>
+          <button className="btn-premium cta-btn" style={{ background: 'white', color: 'var(--purple)', fontSize: '18px', padding: '16px 48px' }} onClick={() => navigate('/signup')}>
+            Get Started Free
+          </button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ background: '#0F0F1E', color: 'white', padding: '80px 0 40px' }}>
+        <div className="container">
+          <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: '60px', marginBottom: '60px' }}>
+            <div className="footer-col">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '24px', fontWeight: '800', marginBottom: '24px' }}>
+                <Zap size={28} fill="var(--purple)" color="var(--purple)" /> ServiceHub
+              </div>
+              <p style={{ color: 'var(--gray)', lineHeight: '1.8', marginBottom: '24px' }}>
+                Professional home services delivered by verified experts at your doorstep. Reliability and quality guaranteed.
+              </p>
+              <div className="footer-socials" style={{ display: 'flex', gap: '16px' }}>
+                {[FacebookIcon, TwitterIcon, InstagramIcon, LinkedinIcon].map((Icon, i) => (
+                  <div key={i} style={{
+                    width: '36px', height: '36px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.3s'
+                  }} onMouseOver={(e) => e.currentTarget.style.background = 'var(--purple)'} onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}>
+                    <Icon size={18} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="footer-col">
+              <h4 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '24px' }}>Services</h4>
+              <ul style={{ listStyle: 'none', color: 'var(--gray)', display: 'grid', gap: '12px' }}>
+                <li>Cleaning</li><li>Plumbing</li><li>Electrical</li><li>Painting</li><li>Pest Control</li>
+              </ul>
+            </div>
+            <div className="footer-col">
+              <h4 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '24px' }}>Company</h4>
+              <ul style={{ listStyle: 'none', color: 'var(--gray)', display: 'grid', gap: '12px' }}>
+                <li>About Us</li><li>How it Works</li><li>Careers</li><li>Press</li><li>Contact</li>
+              </ul>
+            </div>
+            <div className="footer-col">
+              <h4 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '24px' }}>Contact</h4>
+              <ul style={{ listStyle: 'none', color: 'var(--gray)', display: 'grid', gap: '16px' }}>
+                <li style={{ display: 'flex', gap: '10px' }}><MapPin size={20} color="var(--purple)" /> 123 Business Park, Mumbai</li>
+                <li style={{ display: 'flex', gap: '10px' }}><Phone size={20} color="var(--purple)" /> +91 1234567890</li>
+                <li style={{ display: 'flex', gap: '10px' }}><Mail size={20} color="var(--purple)" /> help@servicehub.com</li>
+              </ul>
+            </div>
+          </div>
+          <div className="footer-bottom" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '30px', display: 'flex', justifyContent: 'space-between', color: 'var(--gray)', fontSize: '14px' }}>
+            <p>© 2026 ServiceHub Technologies Pvt Ltd. All rights reserved.</p>
+            <div style={{ display: 'flex', gap: '24px' }}>
+              <span>Privacy</span><span>Terms</span><span>Cookies</span>
+            </div>
           </div>
         </div>
       </footer>

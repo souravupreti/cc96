@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import BookingCard from '../components/BookingCard';
+import { BookOpen, RefreshCw, Calendar, ChevronRight } from 'lucide-react';
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
@@ -16,7 +17,6 @@ export default function MyBookings() {
     try {
       const res = await api.get(`/api/bookings/customer/${auth.userId}`);
       setBookings(res.data.bookings || []);
-      setError('');
     } catch (err) {
       setError(err.response?.data?.error || 'Error fetching bookings');
     } finally {
@@ -35,81 +35,76 @@ export default function MyBookings() {
     return () => clearInterval(interval);
   }, [auth.isAuthenticated, navigate, fetchBookings]);
 
-  const filteredBookings = activeTab === 'All' 
-    ? bookings 
+  const filteredBookings = activeTab === 'All'
+    ? bookings
     : bookings.filter(b => b.status === activeTab);
 
-  const tabs = ['All', 'Pending', 'Accepted', 'Delivered'];
-
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-app-bg py-12 px-4 fade-in">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold text-app-text flex items-center gap-3">
-              <span className="bg-primary/10 text-primary w-12 h-12 rounded-2xl flex items-center justify-center">📋</span>
-              My Bookings
-            </h1>
-            <p className="text-gray-500 text-sm mt-2 ml-15">Auto-refreshes every 30 seconds</p>
+    <div className="page">
+      <div className="page-header">
+        <div className="container">
+          <div className="header-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ background: 'rgba(255,255,255,0.2)', padding: '12px', borderRadius: '16px' }}>
+                <BookOpen size={32} color="white" />
+              </div>
+              <div>
+                <h1 style={{ margin: 0, fontSize: 'inherit' }}>My Bookings</h1>
+                <p style={{ opacity: 0.8, margin: 0 }}>Manage and track your service requests</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => { setLoading(true); fetchBookings(); }} 
+              className="btn-premium" 
+              style={{ background: 'white', color: 'var(--purple)', padding: '10px 24px', minWidth: 'auto' }}
+            >
+              <RefreshCw size={18} className={loading ? 'animate-spin' : ''} /> Refresh
+            </button>
           </div>
-          <button
-            onClick={() => { setLoading(true); fetchBookings(); }}
-            className="bg-white border border-gray-200 text-gray-700 px-5 py-2.5 rounded-full font-bold hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2"
-          >
-            <span>↻</span> Refresh
-          </button>
+        </div>
+      </div>
+
+      <div className="container" style={{ paddingBottom: '80px' }}>
+        <div className="tabs" style={{ marginBottom: '40px' }}>
+          {['All', 'Pending', 'Accepted', 'Delivered'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`tab ${activeTab === tab ? 'active' : ''}`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
-        {error && <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-100 font-medium">⚠️ {error}</div>}
-
-        {/* Filter Tabs */}
-        {bookings.length > 0 && (
-          <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2.5 rounded-full font-bold whitespace-nowrap transition-all duration-300 ${
-                  activeTab === tab
-                    ? 'bg-primary text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
-                }`}
-              >
-                {tab}
-                <span className={`ml-2 text-xs py-0.5 px-2 rounded-full ${activeTab === tab ? 'bg-white/20' : 'bg-gray-100'}`}>
-                  {tab === 'All' ? bookings.length : bookings.filter(b => b.status === tab).length}
-                </span>
-              </button>
-            ))}
+        {error && (
+          <div style={{ color: '#E65100', background: '#FFF3E0', padding: '16px', borderRadius: '12px', marginBottom: '32px', fontWeight: '500', textAlign: 'center' }}>
+            {error}
           </div>
         )}
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div style={{ textAlign: 'center', padding: '100px 0' }}>
+            <RefreshCw size={48} color="var(--purple)" className="animate-spin" />
+            <p style={{ marginTop: '16px', color: 'var(--gray)', fontWeight: '600' }}>Updating your list...</p>
           </div>
         ) : filteredBookings.length === 0 ? (
-          <div className="bg-white rounded-premium border border-gray-100 p-12 text-center shadow-sm fade-in">
-            <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
-              📭
+          <div className="card-3d" style={{ textAlign: 'center', padding: '100px 40px' }}>
+            <div className="icon-box" style={{ width: '100px', height: '100px', fontSize: '40px' }}>
+              <Calendar size={48} color="var(--purple)" />
             </div>
-            <h3 className="text-2xl font-bold text-app-text mb-2">No bookings found</h3>
-            <p className="text-gray-500 mb-8 max-w-md mx-auto">
-              {activeTab === 'All' 
-                ? "You haven't booked any services yet. Find a professional for your home today!"
-                : `You don't have any ${activeTab.toLowerCase()} bookings at the moment.`}
+            <h3 style={{ fontSize: '24px', marginBottom: '12px' }}>No {activeTab === 'All' ? '' : activeTab.toLowerCase()} bookings</h3>
+            <p style={{ color: 'var(--gray)', marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>
+              You don't have any bookings in this category. Browse our premium services to find what you need.
             </p>
             {activeTab === 'All' && (
-              <button
-                onClick={() => navigate('/services')}
-                className="bg-secondary text-white px-8 py-3.5 rounded-btn font-bold hover:bg-secondary-hover shadow-lg transition-all hover:-translate-y-1"
-              >
-                Browse Services
+              <button onClick={() => navigate('/services')} className="btn-premium btn-premium-orange">
+                Browse Services <ChevronRight size={20} />
               </button>
             )}
           </div>
         ) : (
-          <div className="grid gap-6 fade-in">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {filteredBookings.map((booking) => (
               <BookingCard
                 key={booking._id}

@@ -1,111 +1,99 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { Zap, User, Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     auth.logout();
-    setIsMobileOpen(false);
+    setIsMenuOpen(false);
     navigate('/');
   };
 
-  return (
-    <nav className="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] fade-in">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white shadow-premium group-hover:scale-105 transition-transform duration-300">
-            ⚡
-          </div>
-          <span className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-[#9B6BFF] text-transparent bg-clip-text">
-            ServiceHub
-          </span>
-        </Link>
+  const closeMenu = () => setIsMenuOpen(false);
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
-          <div className="flex gap-6 font-medium text-gray-600">
-            <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-            <Link to="/services" className="hover:text-primary transition-colors">Services</Link>
-            <a href="/#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-          </div>
-          
-          <div className="flex items-center gap-3 border-l pl-8 border-gray-200">
-            {!auth.isAuthenticated ? (
-              <>
-                <Link to="/login" className="px-6 py-2.5 rounded-btn font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-300">
-                  Login
-                </Link>
-                <Link to="/vendor-login" className="px-6 py-2.5 rounded-btn font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-300">
-                  Vendor
-                </Link>
-                <Link to="/signup" className="px-6 py-2.5 rounded-btn font-semibold bg-primary text-white hover:bg-primary-hover shadow-premium hover:shadow-premium-hover transition-all duration-300">
-                  Sign Up
-                </Link>
-              </>
-            ) : (
-              <>
-                {auth.userType === 'customer' && (
-                  <Link to="/my-bookings" className="px-6 py-2.5 rounded-btn font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-300">
-                    My Bookings
-                  </Link>
-                )}
-                {auth.userType === 'vendor' && (
-                  <Link to="/vendor-dashboard" className="px-6 py-2.5 rounded-btn font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-300">
-                    Dashboard
-                  </Link>
-                )}
-                <button
-                  onClick={handleLogout}
-                  className="px-6 py-2.5 rounded-btn font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-300"
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
+  return (
+    <nav className="navbar">
+      <div className="container" style={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between' }}>
+        {/* Logo Section */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+          <Link to="/" className="navbar-logo" onClick={closeMenu}>
+            <Zap size={28} fill="currentColor" />
+            <span className="text-gradient">ServiceHub</span>
+          </Link>
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <button 
-          className="md:hidden text-gray-600 p-2"
-          onClick={() => setIsMobileOpen(!isMobileOpen)}
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {isMobileOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
-      </div>
+        {/* Links Section (Desktop) */}
+        <div style={{ flex: 2, display: 'flex', justifyContent: 'center' }}>
+          <ul className="navbar-links" style={{ display: 'flex', gap: '32px', listStyle: 'none', margin: 0, padding: 0 }}>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/services">Services</Link></li>
+            <li><a href="/#how-it-works">How it Works</a></li>
+          </ul>
+        </div>
 
-      {/* Mobile Nav */}
-      {isMobileOpen && (
-        <div className="md:hidden bg-white border-b border-gray-100 px-4 py-6 space-y-4 shadow-xl absolute w-full left-0 fade-in">
-          <Link to="/" onClick={() => setIsMobileOpen(false)} className="block font-medium text-gray-600 py-2">Home</Link>
-          <Link to="/services" onClick={() => setIsMobileOpen(false)} className="block font-medium text-gray-600 py-2">Services</Link>
-          <a href="/#how-it-works" onClick={() => setIsMobileOpen(false)} className="block font-medium text-gray-600 py-2">How it Works</a>
-          <hr className="border-gray-100" />
+        {/* Actions Section (Desktop) */}
+        <div className="navbar-actions" style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '20px' }}>
           {!auth.isAuthenticated ? (
-            <div className="flex flex-col gap-3 pt-2">
-              <Link to="/login" onClick={() => setIsMobileOpen(false)} className="text-center px-6 py-3 rounded-btn font-semibold text-gray-700 bg-gray-50">Login</Link>
-              <Link to="/signup" onClick={() => setIsMobileOpen(false)} className="text-center px-6 py-3 rounded-btn font-semibold bg-primary text-white shadow-premium">Sign Up</Link>
+            <div className="navbar-desktop-actions" style={{ display: 'flex', alignItems: 'center' }}>
+              <Link to="/login" style={{ textDecoration: 'none', color: 'var(--dark)', fontWeight: '600', marginRight: '20px' }}>Login</Link>
+              <Link to="/signup" className="btn-premium" style={{ padding: '10px 24px', fontSize: '14px' }}>Sign Up</Link>
             </div>
           ) : (
-            <div className="flex flex-col gap-3 pt-2">
+            <div className="navbar-desktop-actions" style={{ display: 'flex', alignItems: 'center' }}>
               {auth.userType === 'customer' && (
-                <Link to="/my-bookings" onClick={() => setIsMobileOpen(false)} className="text-center px-6 py-3 rounded-btn font-semibold text-gray-700 bg-gray-50">My Bookings</Link>
+                <Link to="/my-bookings" className="btn-outline" style={{ padding: '8px 20px', fontSize: '14px', marginRight: '10px' }}>My Bookings</Link>
               )}
               {auth.userType === 'vendor' && (
-                <Link to="/vendor-dashboard" onClick={() => setIsMobileOpen(false)} className="text-center px-6 py-3 rounded-btn font-semibold text-gray-700 bg-gray-50">Dashboard</Link>
+                <Link to="/vendor-dashboard" className="btn-outline" style={{ padding: '8px 20px', fontSize: '14px', marginRight: '10px' }}>Dashboard</Link>
               )}
-              <button onClick={handleLogout} className="text-center px-6 py-3 rounded-btn font-semibold bg-red-50 text-red-600">Logout</button>
+              <button onClick={handleLogout} className="btn-premium" style={{ padding: '10px 24px', fontSize: '14px' }}>Logout</button>
+            </div>
+          )}
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="mobile-toggle" 
+            style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--dark)' }}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+      </div>
+
+      {/* CSS for Mobile Toggle display */}
+      <style>{`
+        @media (max-width: 768px) {
+          .mobile-toggle { display: block !important; }
+        }
+      `}</style>
+
+      {/* Mobile Menu Dropdown */}
+      {isMenuOpen && (
+        <div className="mobile-menu-overlay">
+          <Link to="/" className="mobile-nav-link" onClick={closeMenu}>Home</Link>
+          <Link to="/services" className="mobile-nav-link" onClick={closeMenu}>Services</Link>
+          <a href="/#how-it-works" className="mobile-nav-link" onClick={closeMenu}>How it Works</a>
+          
+          {!auth.isAuthenticated ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '20px' }}>
+              <Link to="/login" className="mobile-nav-link" onClick={closeMenu}>Login</Link>
+              <Link to="/signup" className="btn-premium" style={{ width: '100%' }} onClick={closeMenu}>Sign Up</Link>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '20px' }}>
+              {auth.userType === 'customer' && (
+                <Link to="/my-bookings" className="mobile-nav-link" onClick={closeMenu}>My Bookings</Link>
+              )}
+              {auth.userType === 'vendor' && (
+                <Link to="/vendor-dashboard" className="mobile-nav-link" onClick={closeMenu}>Dashboard</Link>
+              )}
+              <button onClick={handleLogout} className="btn-premium" style={{ width: '100%' }}>Logout</button>
             </div>
           )}
         </div>

@@ -24,7 +24,6 @@ describe('Navbar', () => {
     renderWithAuth({ isAuthenticated: false, login: vi.fn(), logout: vi.fn() });
     expect(screen.getByText('Login')).toBeInTheDocument();
     expect(screen.getByText('Sign Up')).toBeInTheDocument();
-    expect(screen.getByText('Vendor')).toBeInTheDocument();
   });
 
   it('shows customer links when authenticated as customer', () => {
