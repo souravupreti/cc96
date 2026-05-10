@@ -1,9 +1,13 @@
 const bcrypt = require('bcryptjs');
-const axios = require('axios');
+const twilio = require('twilio');
 const Customer = require('../models/Customer');
 const OTP = require('../models/OTP');
 const generateOTP = require('../utils/otpGenerator');
 const generateToken = require('../utils/tokenGenerator');
+
+const twilioClient = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN 
+  ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+  : null;
 
 exports.sendOtp = async (req, res, next) => {
   try {
@@ -18,25 +22,21 @@ exports.sendOtp = async (req, res, next) => {
     await OTP.create({ mobile, otp, expiresAt });
 
     // Development Mode Fallback
-    if (!process.env.FAST2SMS_KEY || process.env.FAST2SMS_KEY === 'your_api_key_here') {
-      console.warn('Fast2SMS API key missing. Logging OTP to console for development.');
+    if (!twilioClient) {
+      console.warn('Twilio credentials missing. Logging OTP to console for development.');
       console.log(`[OTP DEBUG] Mobile: ${mobile}, OTP: ${otp}`);
       return res.json({ success: true, message: 'OTP sent (Development Mode)' });
     }
 
     try {
-      await axios.get('https://www.fast2sms.com/dev/bulkV2', {
-        params: {
-          authorization: process.env.FAST2SMS_KEY,
-          message: `Your ServiceHub OTP is ${otp}. Valid for 5 minutes.`,
-          language: 'english',
-          route: 'q',
-          numbers: mobile
-        }
+      await twilioClient.messages.create({
+        body: `Your ServiceHub OTP is: ${otp}. Valid for 5 minutes.`,
+        from: process.env.TWILIO_PHONE,
+        to: `+91${mobile}`
       });
       res.json({ success: true, message: 'OTP sent successfully' });
     } catch (err) {
-      console.error('Fast2SMS error:', err.response?.data || err.message);
+      console.error('Twilio error:', err);
       res.status(500).json({ success: false, message: 'Failed to send OTP' });
     }
   } catch (error) {
