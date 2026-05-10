@@ -1,13 +1,8 @@
 const bcrypt = require('bcryptjs');
-const twilio = require('twilio');
 const Customer = require('../models/Customer');
 const OTP = require('../models/OTP');
 const generateOTP = require('../utils/otpGenerator');
 const generateToken = require('../utils/tokenGenerator');
-
-const twilioClient = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN 
-  ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
-  : null;
 
 exports.sendOtp = async (req, res, next) => {
   try {
@@ -17,28 +12,13 @@ exports.sendOtp = async (req, res, next) => {
     }
 
     const otp = generateOTP();
+    console.log(`[OTP DEBUG] Mobile: ${mobile}, OTP: ${otp}`);
+
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
     await OTP.deleteMany({ mobile });
     await OTP.create({ mobile, otp, expiresAt });
 
-    // Development Mode Fallback
-    if (!twilioClient) {
-      console.warn('Twilio credentials missing. Logging OTP to console for development.');
-      console.log(`[OTP DEBUG] Mobile: ${mobile}, OTP: ${otp}`);
-      return res.json({ success: true, message: 'OTP sent (Development Mode)' });
-    }
-
-    try {
-      await twilioClient.messages.create({
-        body: `Your ServiceHub OTP is: ${otp}. Valid for 5 minutes.`,
-        from: process.env.TWILIO_PHONE,
-        to: `+91${mobile}`
-      });
-      res.json({ success: true, message: 'OTP sent successfully' });
-    } catch (err) {
-      console.error('Twilio error:', err);
-      res.status(500).json({ success: false, message: 'Failed to send OTP' });
-    }
+    res.json({ success: true, message: 'OTP sent successfully' });
   } catch (error) {
     next(error);
   }
