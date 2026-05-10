@@ -206,6 +206,33 @@ html {
   color: #444;
 }
 
+/* OTP Styles */
+.otp-container {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.otp-box {
+  width: 50px;
+  height: 60px;
+  border: 2px solid #E8E8E8;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--purple);
+  outline: none;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.otp-box:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 4px rgba(108,59,245,0.1);
+}
+
 /* Status Badges */
 .badge {
   padding: 6px 16px;
@@ -539,7 +566,8 @@ html {
   .auth-header { padding: 28px 20px !important; }
   .auth-header h2 { font-size: 22px !important; }
   .auth-body { padding: 20px !important; }
-  .otp-box { width: 40px !important; height: 48px !important; font-size: 18px !important; gap: 8px !important; }
+  .otp-container { gap: 8px !important; }
+  .otp-box { width: 40px !important; height: 48px !important; font-size: 18px !important; }
 
   /* My Bookings */
   .page-header { padding: 24px 0 !important; }
