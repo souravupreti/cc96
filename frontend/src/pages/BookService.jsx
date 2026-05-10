@@ -18,6 +18,8 @@ export default function BookService() {
   const location = useLocation();
 
   useEffect(() => {
+    if (auth.loading) return;
+
     if (!auth.isAuthenticated) {
       navigate('/login');
       return;
@@ -36,7 +38,7 @@ export default function BookService() {
     };
 
     fetchServices();
-  }, [auth.isAuthenticated, navigate, location.state]);
+  }, [auth.isAuthenticated, auth.loading, navigate, location.state]);
 
   const getMinDate = () => {
     const today = new Date();
@@ -80,6 +82,13 @@ export default function BookService() {
           <h2 style={{ marginBottom: '10px' }}>Booking Success!</h2>
           <p style={{ color: 'var(--gray)' }}>Redirecting you to your bookings dashboard...</p>
         </div>
+      </div>
+    );
+  }
+  if (auth.loading) {
+    return (
+      <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <RefreshCw size={48} color="var(--purple)" className="animate-spin" />
       </div>
     );
   }

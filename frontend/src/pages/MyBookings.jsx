@@ -25,6 +25,8 @@ export default function MyBookings() {
   }, [auth.userId]);
 
   useEffect(() => {
+    if (auth.loading) return;
+
     if (!auth.isAuthenticated) {
       navigate('/login');
       return;
@@ -33,7 +35,7 @@ export default function MyBookings() {
     fetchBookings();
     const interval = setInterval(fetchBookings, 30000);
     return () => clearInterval(interval);
-  }, [auth.isAuthenticated, navigate, fetchBookings]);
+  }, [auth.isAuthenticated, auth.loading, navigate, fetchBookings]);
 
   const filteredBookings = activeTab === 'All'
     ? bookings
@@ -48,6 +50,14 @@ export default function MyBookings() {
       setError(err.response?.data?.error || 'Error cancelling booking');
     }
   };
+
+  if (auth.loading) {
+    return (
+      <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <RefreshCw size={48} color="var(--purple)" className="animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="page">

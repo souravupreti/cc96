@@ -28,6 +28,8 @@ export default function VendorDashboard() {
   }, [auth.userId]);
 
   useEffect(() => {
+    if (auth.loading) return;
+
     if (!auth.isAuthenticated || auth.userType !== 'vendor') {
       navigate('/vendor-login');
       return;
@@ -36,7 +38,7 @@ export default function VendorDashboard() {
     fetchBookings();
     const interval = setInterval(fetchBookings, 30000);
     return () => clearInterval(interval);
-  }, [auth.isAuthenticated, auth.userType, navigate, fetchBookings]);
+  }, [auth.isAuthenticated, auth.userType, auth.loading, navigate, fetchBookings]);
 
   const handleAccept = async (bookingId) => {
     try {
@@ -71,6 +73,14 @@ export default function VendorDashboard() {
     pending: bookings.filter(b => b.status === 'Pending').length,
     completed: bookings.filter(b => b.status === 'Delivered').length
   };
+
+  if (auth.loading) {
+    return (
+      <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <RefreshCw size={48} color="#0D9488" className="animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="page">
