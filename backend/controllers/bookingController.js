@@ -102,3 +102,47 @@ exports.deliverBooking = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.declineBooking = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking not found' });
+    }
+
+    if (!req.user.vendorId || booking.vendorId.toString() !== req.user.vendorId.toString()) {
+      return res.status(403).json({ success: false, error: 'Not authorized' });
+    }
+
+    booking.status = 'Declined';
+    booking.updatedAt = new Date();
+    await booking.save();
+
+    res.json({ success: true, booking });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.cancelBooking = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking not found' });
+    }
+
+    if (!req.user.customerId || booking.customerId.toString() !== req.user.customerId.toString()) {
+      return res.status(403).json({ success: false, error: 'Not authorized' });
+    }
+
+    booking.status = 'Cancelled';
+    booking.updatedAt = new Date();
+    await booking.save();
+
+    res.json({ success: true, booking });
+  } catch (error) {
+    next(error);
+  }
+};

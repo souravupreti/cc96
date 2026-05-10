@@ -9,5 +9,7 @@ router.get('/customer/:id', authMiddleware, bookingController.getCustomerBooking
 router.get('/vendor/:id', authMiddleware, bookingController.getVendorBookings);
 router.patch('/:id/accept', authMiddleware, bookingController.acceptBooking);
 router.patch('/:id/deliver', authMiddleware, bookingController.deliverBooking);
+router.patch('/:id/decline', authMiddleware, bookingController.declineBooking);
+router.patch('/:id/cancel', authMiddleware, bookingController.cancelBooking);
 
 module.exports = router;

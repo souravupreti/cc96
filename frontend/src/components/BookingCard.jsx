@@ -6,7 +6,7 @@ import {
   XCircle 
 } from 'lucide-react';
 
-export default function BookingCard({ booking, onAccept, onDeliver, isVendor }) {
+export default function BookingCard({ booking, onAccept, onDeliver, onDecline, onCancel, isVendor }) {
   const serviceName = booking.serviceId?.name || 'Service';
   const serviceIconName = booking.serviceId?.icon || 'Zap';
   const customerName = booking.customerId?.name || '';
@@ -77,7 +77,7 @@ export default function BookingCard({ booking, onAccept, onDeliver, isVendor }) 
                 <button onClick={onAccept} className="btn-premium" style={{ background: '#22C55E', boxShadow: '0 4px 15px rgba(34,197,94,0.3)', padding: '10px' }}>
                   <CheckCircle size={18} /> Accept
                 </button>
-                <button className="btn-outline" style={{ borderColor: '#EF4444', color: '#EF4444', padding: '8px' }}>
+                <button onClick={onDecline} className="btn-outline" style={{ borderColor: '#EF4444', color: '#EF4444', padding: '8px' }}>
                   <XCircle size={18} /> Decline
                 </button>
               </>
@@ -90,7 +90,7 @@ export default function BookingCard({ booking, onAccept, onDeliver, isVendor }) 
           </>
         ) : (
           booking.status === 'Pending' && (
-            <button className="btn-outline" style={{ borderColor: 'var(--orange)', color: 'var(--orange)', padding: '10px' }}>
+            <button onClick={onCancel} className="btn-outline" style={{ borderColor: 'var(--orange)', color: 'var(--orange)', padding: '10px' }}>
               <XCircle size={18} /> Cancel
             </button>
           )

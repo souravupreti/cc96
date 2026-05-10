@@ -56,6 +56,15 @@ export default function VendorDashboard() {
     }
   };
 
+  const handleDecline = async (bookingId) => {
+    try {
+      const res = await api.patch(`/api/bookings/${bookingId}/decline`);
+      setBookings(bookings.map(b => b._id === bookingId ? res.data.booking : b));
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error declining booking');
+    }
+  };
+
   const filteredBookings = bookings.filter(b => b.status === activeTab);
   const stats = {
     total: bookings.length,
@@ -152,6 +161,7 @@ export default function VendorDashboard() {
                 booking={booking}
                 onAccept={() => handleAccept(booking._id)}
                 onDeliver={() => handleDeliver(booking._id)}
+                onDecline={() => handleDecline(booking._id)}
                 isVendor={true}
               />
             ))}

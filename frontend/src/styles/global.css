@@ -219,6 +219,8 @@ html {
 .badge-pending  { background: var(--orange-light); color: var(--orange); }
 .badge-accepted { background: var(--purple-light); color: var(--purple); }
 .badge-delivered{ background: #E8F5E9; color: #2E7D32; }
+.badge-declined { background: #FEE2E2; color: #EF4444; }
+.badge-cancelled{ background: #F3F4F6; color: #6B7280; }
 
 /* Navbar */
 .navbar {

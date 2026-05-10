@@ -39,6 +39,16 @@ export default function MyBookings() {
     ? bookings
     : bookings.filter(b => b.status === activeTab);
 
+  const handleCancel = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to cancel this booking?')) return;
+    try {
+      const res = await api.patch(`/api/bookings/${bookingId}/cancel`);
+      setBookings(bookings.map(b => b._id === bookingId ? res.data.booking : b));
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error cancelling booking');
+    }
+  };
+
   return (
     <div className="page">
       <div className="page-header">
@@ -109,6 +119,7 @@ export default function MyBookings() {
               <BookingCard
                 key={booking._id}
                 booking={booking}
+                onCancel={() => handleCancel(booking._id)}
                 isVendor={false}
               />
             ))}
