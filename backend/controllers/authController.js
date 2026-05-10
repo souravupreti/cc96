@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const axios = require('axios');
 const Customer = require('../models/Customer');
 const OTP = require('../models/OTP');
 const generateOTP = require('../utils/otpGenerator');
@@ -12,13 +13,32 @@ exports.sendOtp = async (req, res, next) => {
     }
 
     const otp = generateOTP();
-    console.log(`[OTP DEBUG] Mobile: ${mobile}, OTP: ${otp}`);
-
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
     await OTP.deleteMany({ mobile });
     await OTP.create({ mobile, otp, expiresAt });
 
-    res.json({ success: true, message: 'OTP sent successfully' });
+    // Development Mode Fallback
+    if (!process.env.FAST2SMS_KEY || process.env.FAST2SMS_KEY === 'your_api_key_here') {
+      console.warn('Fast2SMS API key missing. Logging OTP to console for development.');
+      console.log(`[OTP DEBUG] Mobile: ${mobile}, OTP: ${otp}`);
+      return res.json({ success: true, message: 'OTP sent (Development Mode)' });
+    }
+
+    try {
+      await axios.get('https://www.fast2sms.com/dev/bulkV2', {
+        params: {
+          authorization: process.env.FAST2SMS_KEY,
+          message: `Your ServiceHub OTP is ${otp}. Valid for 5 minutes.`,
+          language: 'english',
+          route: 'q',
+          numbers: mobile
+        }
+      });
+      res.json({ success: true, message: 'OTP sent successfully' });
+    } catch (err) {
+      console.error('Fast2SMS error:', err.response?.data || err.message);
+      res.status(500).json({ success: false, message: 'Failed to send OTP' });
+    }
   } catch (error) {
     next(error);
   }
